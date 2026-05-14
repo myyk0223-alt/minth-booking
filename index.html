@@ -4,282 +4,628 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>nailsalon minth 予約</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--pink:#D4537E;--pink-light:#FBEAF0;--pink-mid:#ED93B1;--pink-dark:#993556;--purple:#534AB7;--purple-light:#EEEDFE;--bg:#fff;--bg2:#f8f8f8;--text:#1a1a1a;--text2:#666;--text3:#aaa;--border:#e0e0e0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;background:var(--bg);color:var(--text)}
-.app{max-width:480px;margin:0 auto;padding:0;min-height:100vh}
+:root{--pink:#D4537E;--pink-light:#FBEAF0;--pink-dark:#993556;--purple:#534AB7;--purple-light:#EEEDFE;--border:#e0e0e0;--bg:#fff;--bg2:#f8f8f8;--text:#222;--text2:#666;--text3:#aaa}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--text);max-width:480px;margin:0 auto}
 .header{padding:1.2rem 1rem 1rem;border-bottom:1px solid var(--border);text-align:center}
 .header h1{font-size:18px;font-weight:500;letter-spacing:0.05em}
 .header p{font-size:12px;color:var(--text2);margin-top:4px}
 .tab-bar{display:flex;border-bottom:1px solid var(--border)}
-.tab{flex:1;padding:12px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s}
+.tab{flex:1;padding:12px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px}
 .tab.active{color:var(--pink);border-bottom-color:var(--pink);font-weight:500}
 .view{display:none;padding:1rem}.view.active{display:block}
-.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.week-nav button{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;color:var(--text)}
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.week-nav button{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px}
 .week-nav span{font-size:14px;font-weight:500}
 .week-grid{width:100%;border-collapse:collapse;font-size:13px}
-.week-grid th{text-align:center;padding:8px 4px;font-weight:400;font-size:12px;color:var(--text2)}
-.week-grid th.date-col{font-size:13px;color:var(--text)}
+.week-grid th{text-align:center;padding:8px 2px;font-weight:400;font-size:11px;color:var(--text2)}
+.week-grid th.dc{font-size:12px;color:var(--text)}
 .week-grid th.today-col{color:var(--pink);font-weight:500}
-.week-grid th.sun{color:#E24B4A}
-.week-grid th.sat{color:#185FA5}
-.week-grid td{text-align:center;padding:6px 2px;border-top:1px solid #f0f0f0}
-.week-grid td.time-label{font-size:11px;color:var(--text3);text-align:left;padding-left:4px;white-space:nowrap}
-.slot-btn{width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;justify-content:center;transition:all 0.15s}
-.slot-btn.available{background:none;color:var(--pink);border:1.5px solid var(--pink)}
-.slot-btn.available:hover{background:var(--pink-light)}
-.slot-btn.booked,.slot-btn.closed{background:none;color:var(--text3);border:none;cursor:default;font-size:14px}
-.slot-btn.night-available{background:none;color:var(--purple);border:1.5px solid var(--purple)}
-.slot-btn.night-available:hover{background:var(--purple-light)}
-.slot-btn.selected{background:var(--pink);color:#fff;border-color:var(--pink)}
-.form-overlay{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);border-radius:16px 16px 0 0;padding:1.25rem;z-index:100;max-height:85vh;overflow-y:auto;box-shadow:0 -4px 20px rgba(0,0,0,0.08)}
-.form-overlay.open{display:block}
-.form-handle{width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 1rem}
-.form-title{font-size:15px;font-weight:500;margin-bottom:1rem}
-.selected-info{background:var(--pink-light);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--pink-dark)}
-.night-notice{background:var(--purple-light);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--purple)}
+.week-grid th.sun{color:#e24b4a}.week-grid th.sat{color:#185fa5}
+.week-grid td{text-align:center;padding:4px 2px;border-top:1px solid #f0f0f0}
+.week-grid td.tl{font-size:10px;color:var(--text3);text-align:left;padding-left:2px;white-space:nowrap}
+.sb{width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;font-size:11px;display:inline-flex;align-items:center;justify-content:center;transition:all 0.1s}
+.sb.av{background:none;color:var(--pink);border:1.5px solid var(--pink)}
+.sb.av:hover{background:var(--pink-light)}
+.sb.nx{background:none;color:var(--text3);border:none;cursor:default}
+.sb.nv{background:none;color:var(--purple);border:1.5px solid var(--purple)}
+.sb.nv:hover{background:var(--purple-light)}
+.sb.sel{background:var(--pink);color:#fff;border-color:var(--pink)}
+/* 管理モードのブロックボタン */
+.sb.blk-mode.av,.sb.blk-mode.nv{cursor:pointer;border-style:dashed}
+.sb.blk-mode.av:hover{background:#fff3f3;border-color:#f09595;color:#a32d2d}
+.sb.blk-mode.nv:hover{background:#fff3f3;border-color:#f09595;color:#a32d2d}
+.sb.blk-mode.nx.is-block{background:#fff3f3;color:#a32d2d;border:1.5px solid #f09595;cursor:pointer}
+.sb.blk-mode.nx.is-block:hover{background:#fcebeb}
+.overlay{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);border-radius:16px 16px 0 0;padding:1.25rem;z-index:100;max-height:90vh;overflow-y:auto;box-shadow:0 -4px 20px rgba(0,0,0,0.1)}
+.overlay.open{display:block}
+.handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1rem}
+.si{background:var(--pink-light);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--pink-dark)}
+.nn{background:var(--purple-light);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--purple)}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);font-family:inherit}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text)}
 .field textarea{resize:none;height:60px}
-.btn-primary{background:var(--pink);color:#fff;border:none;padding:13px;border-radius:8px;font-size:14px;cursor:pointer;width:100%;font-weight:500;margin-top:4px;font-family:inherit}
-.btn-primary:hover{background:var(--pink-dark)}
-.btn-primary:disabled{background:#e0e0e0;color:#aaa;cursor:default}
-.btn-cancel{background:none;border:1px solid var(--border);color:var(--text2);padding:10px;border-radius:8px;font-size:13px;cursor:pointer;width:100%;margin-top:8px;font-family:inherit}
-.success-view{text-align:center;padding:3rem 1rem}
-.success-view .icon{font-size:48px;color:var(--pink);display:block;margin-bottom:1rem}
-.success-view h2{font-size:17px;font-weight:500;margin-bottom:8px}
-.success-view p{font-size:13px;color:var(--text2);line-height:1.7}
-.btn-again{background:var(--pink-light);color:var(--pink-dark);border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:1.5rem;font-weight:500;font-family:inherit}
+.filter-group{margin-bottom:12px}
+.filter-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap}
+.fbtn{flex:1;min-width:60px;padding:9px 6px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff;cursor:pointer;color:var(--text2);transition:all 0.15s;text-align:center}
+.fbtn.selected{background:var(--pink-light);border-color:var(--pink);color:var(--pink-dark);font-weight:500}
+.menu-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px}
+.menu-item{padding:10px 12px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text);transition:all 0.15s;border:1px solid transparent}
+.menu-item:hover{background:var(--pink-light)}
+.menu-item.selected{background:var(--pink-light);border-color:var(--pink);color:var(--pink-dark);font-weight:500}
+.menu-item .price{font-size:12px;color:var(--text2);margin-top:2px}
+.menu-item.selected .price{color:var(--pink-dark)}
+.menu-placeholder{padding:1rem;text-align:center;font-size:13px;color:var(--text3)}
+.bp{background:var(--pink);color:#fff;border:none;padding:13px;border-radius:8px;font-size:14px;cursor:pointer;width:100%;font-weight:500;margin-top:4px}
+.bp:hover{background:var(--pink-dark)}
+.bp:disabled{background:#eee;color:#aaa;cursor:default}
+.bc{background:none;border:1px solid var(--border);color:var(--text2);padding:10px;border-radius:8px;font-size:13px;cursor:pointer;width:100%;margin-top:8px}
+.sv{text-align:center;padding:3rem 1rem}
+.sv h2{font-size:17px;font-weight:500;margin-bottom:8px}
+.sv p{font-size:13px;color:var(--text2);line-height:1.7}
+.ba{background:var(--pink-light);color:var(--pink-dark);border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:1.5rem;font-weight:500}
 .pw-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;text-align:center}
-.pw-screen p{font-size:14px;color:var(--text2);margin-bottom:1.5rem}
-.pw-input-row{display:flex;gap:8px;width:100%;max-width:280px}
-.pw-input-row input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit}
-.pw-input-row button{padding:10px 16px;background:var(--pink);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500;font-family:inherit}
-.pw-error{color:#A32D2D;font-size:13px;margin-top:8px}
-.admin-section{margin-bottom:1.5rem}
-.section-label{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
-.booking-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.booking-card .name{font-size:14px;font-weight:500;margin-bottom:3px}
-.booking-card .detail{font-size:12px;color:var(--text2);line-height:1.7}
-.badge{font-size:10px;padding:2px 8px;border-radius:100px;margin-left:6px;display:inline-block}
-.badge-night{background:var(--purple-light);color:var(--purple)}
-.badge-new{background:var(--pink-light);color:var(--pink-dark)}
-.btn-del{background:none;border:1px solid #F09595;border-radius:8px;padding:6px 10px;cursor:pointer;color:#A32D2D;font-size:12px}
-.btn-del:hover{background:#FCEBEB}
-.empty-msg{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
-.filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.filter-row input{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;flex:1;min-width:100px;font-family:inherit}
-.closed-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-.closed-row input{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit}
-.closed-row button{padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;background:#fff;font-family:inherit}
-.closed-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.closed-tag{background:var(--bg2);border:1px solid var(--border);border-radius:100px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:5px}
-.closed-tag button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0}
-.sync-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:var(--text2);margin-bottom:12px;font-family:inherit}
-.logout-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--text3);float:right;font-family:inherit}
-.legend{display:flex;gap:12px;margin-top:12px;font-size:11px;color:var(--text2);align-items:center;flex-wrap:wrap}
+.pw-row{display:flex;gap:8px;width:100%;max-width:280px}
+.pw-row input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px}
+.pw-row button{padding:10px 16px;background:var(--pink);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500}
+.pw-err{color:#a32d2d;font-size:13px;margin-top:8px}
+.sl{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
+.bc-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.bc-card .nm{font-size:14px;font-weight:500;margin-bottom:3px}
+.bc-card .dt{font-size:12px;color:var(--text2);line-height:1.7}
+.bdg{font-size:10px;padding:2px 8px;border-radius:100px;margin-left:6px;display:inline-block}
+.bdg-n{background:var(--purple-light);color:var(--purple)}
+.bdg-new{background:var(--pink-light);color:var(--pink-dark)}
+.bd{background:none;border:1px solid #f09595;border-radius:8px;padding:6px 10px;cursor:pointer;color:#a32d2d;font-size:12px}
+.bd:hover{background:#fcebeb}
+.em{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+.fr{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.fr input{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;flex:1;min-width:100px}
+.cr{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.cr input{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px}
+.cr button{padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;background:#fff}
+.ct{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ctag{background:var(--bg2);border:1px solid var(--border);border-radius:100px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:5px}
+.ctag button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0}
+.btag{background:#fff3f3;border:1px solid #f09595;border-radius:100px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:5px;color:#a32d2d}
+.btag button{background:none;border:none;cursor:pointer;color:#f09595;font-size:13px;padding:0}
+.synbtn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:var(--text2);margin-bottom:12px}
+.lgbtn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--text3);float:right}
+.legend{display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--text2);flex-wrap:wrap}
+.section-div{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.dur-badge{display:inline-block;background:var(--bg2);border-radius:100px;padding:3px 10px;font-size:12px;color:var(--text2);margin-top:4px}
+/* ブロックモードバナー */
+.block-banner{background:#fff3f3;border:1px solid #f09595;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#a32d2d;display:flex;justify-content:space-between;align-items:center}
+.block-banner button{background:#a32d2d;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer}
+/* 管理カレンダー週ナビ */
+.admin-week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.admin-week-nav button{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-size:13px}
+.admin-week-nav span{font-size:13px;font-weight:500}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <h1>nailsalon minth</h1>
-    <p>ご予約はこちらから</p>
-  </div>
-  <div class="tab-bar">
-    <button class="tab active" onclick="switchTab('booking',this)"><i class="ti ti-calendar"></i> 予約する</button>
-    <button class="tab" onclick="switchTab('admin',this)"><i class="ti ti-settings"></i> 管理画面</button>
-  </div>
+<div class="header">
+  <h1>nailsalon minth</h1>
+  <p>ご予約はこちらから</p>
+</div>
+<div class="tab-bar">
+  <button class="tab active" onclick="switchTab('booking',this)">予約する</button>
+  <button class="tab" onclick="switchTab('admin',this)">管理画面</button>
+</div>
 
-  <div id="view-booking" class="view active">
-    <div id="cal-view">
-      <div class="week-nav">
-        <button onclick="changeWeek(-1)"><i class="ti ti-chevron-left"></i></button>
-        <span id="week-label"></span>
-        <button onclick="changeWeek(1)"><i class="ti ti-chevron-right"></i></button>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="week-grid" id="week-table"></table>
-      </div>
-      <div class="legend">
-        <span><span style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #D4537E;vertical-align:middle"></span> 空き</span>
-        <span><span style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #534AB7;vertical-align:middle"></span> 夜間+¥1,000</span>
-        <span style="color:#aaa">× 埋まり</span>
-      </div>
+<!-- 予約画面 -->
+<div id="view-booking" class="view active">
+  <div id="cal-view">
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">＜</button>
+      <span id="wl"></span>
+      <button onclick="changeWeek(1)">＞</button>
     </div>
-    <div id="success-view" class="success-view" style="display:none">
-      <i class="ti ti-circle-check icon"></i>
-      <h2>ご予約ありがとうございます</h2>
-      <p id="success-detail"></p>
-      <button class="btn-again" onclick="resetBooking()">別の日程を予約する</button>
+    <div style="overflow-x:auto"><table class="week-grid" id="wt"></table></div>
+    <div class="legend">
+      <span><span style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--pink);vertical-align:middle"></span> 空き</span>
+      <span><span style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--purple);vertical-align:middle"></span> 夜間+¥1,000</span>
+      <span style="color:var(--text3)">× 不可</span>
     </div>
   </div>
+  <div id="sv" class="sv" style="display:none">
+    <div style="font-size:48px;color:var(--pink)">✓</div>
+    <h2>ご予約ありがとうございます</h2>
+    <p id="sd"></p>
+    <button class="ba" onclick="resetBooking()">別の日程を予約する</button>
+  </div>
+</div>
 
-  <div id="view-admin" class="view">
-    <div id="pw-screen" class="pw-screen">
-      <i class="ti ti-lock" style="font-size:40px;color:#aaa;margin-bottom:1rem"></i>
-      <p>管理画面はサロンオーナー専用です</p>
-      <div class="pw-input-row">
-        <input type="password" id="pw-input" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()">
-        <button onclick="checkPw()">入る</button>
-      </div>
-      <p class="pw-error" id="pw-error" style="display:none">パスワードが違います</p>
+<!-- 管理画面 -->
+<div id="view-admin" class="view">
+  <div id="pws" class="pw-screen">
+    <div style="font-size:40px;color:#aaa;margin-bottom:1rem">🔒</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:1.5rem">管理画面はサロンオーナー専用です</p>
+    <div class="pw-row">
+      <input type="password" id="pwi" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()">
+      <button onclick="checkPw()">入る</button>
     </div>
-    <div id="admin-content" style="display:none">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-        <button class="logout-btn" onclick="logout()"><i class="ti ti-logout"></i> ログアウト</button>
+    <p class="pw-err" id="pwe" style="display:none">パスワードが違います</p>
+  </div>
+  <div id="ac" style="display:none">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="lgbtn" onclick="logout()">ログアウト</button>
+    </div>
+
+    <!-- 予約一覧 -->
+    <div style="margin-bottom:1.5rem">
+      <p class="sl">予約一覧</p>
+      <button class="synbtn" onclick="loadBookings()">↻ 最新の予約を取得</button>
+      <div class="fr">
+        <input type="text" id="sn" placeholder="名前で検索" oninput="renderList()">
+        <input type="date" id="fd" onchange="renderList()">
       </div>
-      <div class="admin-section">
-        <p class="section-label">予約一覧</p>
-        <button class="sync-btn" onclick="loadBookings()"><i class="ti ti-refresh"></i> 最新の予約を取得</button>
-        <div class="filter-row">
-          <input type="text" id="search-name" placeholder="名前で検索" oninput="renderAdminList()">
-          <input type="date" id="filter-date" onchange="renderAdminList()">
-        </div>
-        <div id="admin-list"><div class="empty-msg">「最新の予約を取得」を押してください</div></div>
+      <div id="al"><div class="em">「最新の予約を取得」を押してください</div></div>
+    </div>
+
+    <!-- 定休日 -->
+    <div class="section-div">
+      <p class="sl">定休日・休業日</p>
+      <div class="cr">
+        <input type="date" id="ci">
+        <button onclick="addClosed()">追加</button>
       </div>
-      <div class="admin-section">
-        <p class="section-label">定休日・休業日</p>
-        <div class="closed-row">
-          <input type="date" id="closed-input">
-          <button onclick="addClosedDay()">追加</button>
-        </div>
-        <div class="closed-tags" id="closed-tags"></div>
+      <div class="ct" id="ctags"></div>
+    </div>
+
+    <!-- 時間ブロック（カレンダータップ） -->
+    <div class="section-div">
+      <p class="sl">時間ブロック</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px">カレンダーの○をタップしてブロック・解除できます</p>
+      <div class="admin-week-nav">
+        <button onclick="adminChangeWeek(-1)">＜</button>
+        <span id="awl"></span>
+        <button onclick="adminChangeWeek(1)">＞</button>
       </div>
+      <div style="overflow-x:auto"><table class="week-grid" id="awt"></table></div>
+      <div class="ct" style="margin-top:10px" id="btags"></div>
     </div>
   </div>
 </div>
 
-<div class="form-overlay" id="form-overlay">
-  <div class="form-handle"></div>
-  <p class="form-title">予約内容の入力</p>
-  <div class="selected-info" id="selected-info"></div>
-  <div id="night-notice" class="night-notice" style="display:none"><i class="ti ti-moon"></i> 19:00以降の夜間枠は +¥1,000 が追加されます</div>
-  <div class="field"><label>お名前 *</label><input type="text" id="f-name" placeholder="山田 花子"></div>
-  <div class="field"><label>メニュー *</label>
-    <select id="f-menu" onchange="updateDuration()">
-      <option value="">選択してください</option>
-      <optgroup label="ご新規〜3回目">
-        <option value="ワンカラー（オフあり）¥3,000" data-min="120">ワンカラー（オフあり）¥3,000</option>
-        <option value="ワンカラー（オフなし）¥3,000" data-min="90">ワンカラー（オフなし）¥3,000</option>
-        <option value="グラデーション/フレンチ（オフあり）¥4,000" data-min="150">グラデーション/フレンチ（オフあり）¥4,000</option>
-        <option value="グラデーション/フレンチ（オフなし）¥4,000" data-min="120">グラデーション/フレンチ（オフなし）¥4,000</option>
-        <option value="バーチャルフレンチ（オフあり）¥4,500" data-min="150">バーチャルフレンチ（オフあり）¥4,500</option>
-        <option value="バーチャルフレンチ（オフなし）¥4,500" data-min="120">バーチャルフレンチ（オフなし）¥4,500</option>
-        <option value="マグネットネイル（オフあり）¥4,000" data-min="150">マグネットネイル（オフあり）¥4,000</option>
-        <option value="マグネットネイル（オフなし）¥4,000" data-min="120">マグネットネイル（オフなし）¥4,000</option>
-        <option value="定額デザイン（オフあり）¥5,000" data-min="180">定額デザイン（オフあり）¥5,000</option>
-        <option value="定額デザイン（オフなし）¥5,000" data-min="150">定額デザイン（オフなし）¥5,000</option>
-        <option value="持ち込みデザイン（オフあり）¥6,500〜" data-min="180">持ち込みデザイン（オフあり）¥6,500〜</option>
-        <option value="持ち込みデザイン（オフなし）¥6,500〜" data-min="150">持ち込みデザイン（オフなし）¥6,500〜</option>
-      </optgroup>
-      <optgroup label="リピーター">
-        <option value="ワンカラー（オフあり）¥5,000" data-min="120">ワンカラー（オフあり）¥5,000</option>
-        <option value="ワンカラー（オフなし）¥5,000" data-min="90">ワンカラー（オフなし）¥5,000</option>
-        <option value="定額デザイン（オフあり）¥7,500" data-min="180">定額デザイン（オフあり）¥7,500</option>
-        <option value="定額デザイン（オフなし）¥7,500" data-min="150">定額デザイン（オフなし）¥7,500</option>
-        <option value="持ち込みデザイン（オフあり）¥8,000〜" data-min="180">持ち込みデザイン（オフあり）¥8,000〜</option>
-        <option value="持ち込みデザイン（オフなし）¥8,000〜" data-min="150">持ち込みデザイン（オフなし）¥8,000〜</option>
-      </optgroup>
-    </select>
+<!-- 予約フォーム -->
+<div class="overlay" id="ov">
+  <div class="handle"></div>
+  <p style="font-size:15px;font-weight:500;margin-bottom:1rem">予約内容の入力</p>
+  <div class="si" id="sinfo"></div>
+  <div id="nnotice" class="nn" style="display:none">🌙 19:00以降の夜間枠は +¥1,000 が追加されます</div>
+  <div class="field"><label>お名前 *</label><input type="text" id="fn" placeholder="山田 花子"></div>
+  <div class="field"><label>電話番号（任意）</label><input type="tel" id="ftel" placeholder="090-0000-0000"></div>
+  <div class="filter-group">
+    <label>施術部位 *</label>
+    <div class="filter-btns">
+      <button class="fbtn" onclick="setFilter('part','hand',this)">ハンド</button>
+      <button class="fbtn" onclick="setFilter('part','foot',this)">フット</button>
+    </div>
   </div>
-  <div class="field"><label>所要時間</label><input type="text" id="f-duration" readonly placeholder="メニューを選択してください" style="color:#aaa"></div>
-  <div class="field"><label>メモ（任意）</label><textarea id="f-note" placeholder="アレルギーや気になることなど"></textarea></div>
-  <button class="btn-primary" id="submit-btn" onclick="submitBooking()">予約を確定する</button>
-  <button class="btn-cancel" onclick="closeForm()">キャンセル</button>
+  <div class="filter-group">
+    <label>ご来店回数 *</label>
+    <div class="filter-btns">
+      <button class="fbtn" onclick="setFilter('visit','new',this)">ご新規〜3回目</button>
+      <button class="fbtn" onclick="setFilter('visit','repeat',this)">リピーター</button>
+    </div>
+  </div>
+  <div class="filter-group" id="off-group" style="display:none">
+    <label>オフ *</label>
+    <div class="filter-btns">
+      <button class="fbtn" onclick="setFilter('off','yes',this)">オフあり</button>
+      <button class="fbtn" onclick="setFilter('off','no',this)">オフなし</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>メニュー *</label>
+    <div class="menu-list" id="menu-list">
+      <div class="menu-placeholder">上の項目を選んでください</div>
+    </div>
+    <div id="dur-display" style="display:none"><span class="dur-badge" id="dur-text"></span></div>
+  </div>
+  <div class="field"><label>メモ（任意）</label><textarea id="fnote" placeholder="アレルギーや気になることなど"></textarea></div>
+  <button class="bp" id="subbtn" onclick="submitBooking()">予約を確定する</button>
+  <button class="bc" onclick="closeForm()">キャンセル</button>
 </div>
 
 <script>
-const GAS_URL='https://script.google.com/macros/s/AKfycby3pLvezMgOKCbZN0PxgKjjtd-2M8ZswKkcl0z1N2C-qWTx_3ak6ZnrxzY0me1EePZlpA/exec';
+const GAS='https://script.google.com/macros/s/AKfycby3pLvezMgOKCbZN0PxgKjjtd-2M8ZswKkcl0z1N2C-qWTx_3ak6ZnrxzY0me1EePZlpA/exec';
 const PW='kegp5fi';
-const TIMES=['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00'];
-const DAYS=['日','月','火','水','木','金','土'];
-let bookings=[],closedDays=JSON.parse(localStorage.getItem('minth_closed')||'[]');
-let weekOffset=0,selectedDate=null,selectedTime=null,submitting=false,adminUnlocked=false;
+const TM=['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00'];
+const DW=['日','月','火','水','木','金','土'];
+const MAX_WEEKS=4;
 
-function checkPw(){
-  const v=document.getElementById('pw-input').value;
-  if(v===PW){adminUnlocked=true;document.getElementById('pw-screen').style.display='none';document.getElementById('admin-content').style.display='block';document.getElementById('pw-error').style.display='none';}
-  else{document.getElementById('pw-error').style.display='block';document.getElementById('pw-input').value='';}
+// メニューデータ（オフあり/なし分離）
+const MENUS={
+  hand:{
+    new:{
+      yes:[
+        {label:'ワンカラー',price:'¥3,000',min:120},
+        {label:'グラデーション・フレンチ',price:'¥4,000',min:150},
+        {label:'バーチャルフレンチ・グラデーション',price:'¥4,500',min:150},
+        {label:'マグネットネイル',price:'¥4,000',min:150},
+        {label:'定額アート',price:'¥5,000',min:180},
+        {label:'持ち込みデザイン',price:'¥6,500〜',min:180},
+      ],
+      no:[
+        {label:'ワンカラー',price:'¥3,000',min:90},
+        {label:'グラデーション・フレンチ',price:'¥4,000',min:120},
+        {label:'バーチャルフレンチ・グラデーション',price:'¥4,500',min:120},
+        {label:'マグネットネイル',price:'¥4,000',min:120},
+        {label:'定額アート',price:'¥5,000',min:150},
+        {label:'持ち込みデザイン',price:'¥6,500〜',min:150},
+      ]
+    },
+    repeat:{
+      yes:[
+        {label:'ワンカラー',price:'¥5,000',min:120},
+        {label:'グラデーション・フレンチ',price:'¥6,000',min:150},
+        {label:'マグネットネイル',price:'¥6,000',min:150},
+        {label:'フレンチネイル',price:'¥6,000',min:150},
+        {label:'バーチャルフレンチ・グラデーション',price:'¥6,500',min:150},
+        {label:'定額アート',price:'¥7,500',min:180},
+        {label:'持ち込みデザイン',price:'¥8,000〜',min:180},
+        {label:'オフのみ（自店）',price:'¥3,000',min:60,noOff:true},
+        {label:'オフのみ（他店）',price:'¥5,000',min:60,noOff:true},
+      ],
+      no:[
+        {label:'ワンカラー',price:'¥5,000',min:90},
+        {label:'グラデーション・フレンチ',price:'¥6,000',min:120},
+        {label:'マグネットネイル',price:'¥6,000',min:120},
+        {label:'フレンチネイル',price:'¥6,000',min:120},
+        {label:'バーチャルフレンチ・グラデーション',price:'¥6,500',min:120},
+        {label:'定額アート',price:'¥7,500',min:150},
+        {label:'持ち込みデザイン',price:'¥8,000〜',min:150},
+      ]
+    }
+  },
+  foot:{
+    new:{
+      yes:[
+        {label:'ワンカラー',price:'¥4,000',min:120},
+        {label:'定額アート',price:'¥5,000',min:180},
+        {label:'持ち込みデザイン',price:'¥6,500〜',min:180},
+      ],
+      no:[
+        {label:'ワンカラー',price:'¥4,000',min:90},
+        {label:'定額アート',price:'¥5,000',min:150},
+        {label:'持ち込みデザイン',price:'¥6,500〜',min:150},
+      ]
+    },
+    repeat:{
+      yes:[
+        {label:'ワンカラー',price:'¥5,000',min:120},
+        {label:'定額アート',price:'¥7,500',min:180},
+        {label:'持ち込みデザイン',price:'¥8,000〜',min:180},
+        {label:'オフのみ（自店）',price:'¥3,000',min:60,noOff:true},
+        {label:'オフのみ（他店）',price:'¥5,000',min:60,noOff:true},
+      ],
+      no:[
+        {label:'ワンカラー',price:'¥5,000',min:90},
+        {label:'定額アート',price:'¥7,500',min:150},
+        {label:'持ち込みデザイン',price:'¥8,000〜',min:150},
+      ]
+    }
+  }
+};
+
+let bookings=[],closed=JSON.parse(localStorage.getItem('mc')||'[]'),blocks=JSON.parse(localStorage.getItem('mb')||'[]');
+let wo=0,awo=0,sd=null,st=null,submitting=false,unlocked=false;
+let filterPart=null,filterVisit=null,filterOff=null,selectedMenu=null;
+
+function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function getWeek(o){
+  const t=new Date(),dw=t.getDay(),m=new Date(t);
+  m.setDate(t.getDate()-dw+1+(o*7));
+  return Array.from({length:7},(_,i)=>{const d=new Date(m);d.setDate(m.getDate()+i);return d;});
 }
-function logout(){adminUnlocked=false;document.getElementById('pw-screen').style.display='flex';document.getElementById('admin-content').style.display='none';document.getElementById('pw-input').value='';}
-function switchTab(t,btn){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));btn.classList.add('active');document.getElementById('view-'+t).classList.add('active');}
-function getWeekDates(o){const t=new Date();const m=new Date(t);m.setDate(t.getDate()-t.getDay()+1+(o*7));return Array.from({length:7},(_,i)=>{const d=new Date(m);d.setDate(m.getDate()+i);return d;});}
-function fmt(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function changeWeek(d){weekOffset+=d;if(weekOffset<0)weekOffset=0;renderWeek();}
+
+// ===== お客様カレンダー =====
+function changeWeek(d){wo+=d;if(wo<0)wo=0;if(wo>MAX_WEEKS-1)wo=MAX_WEEKS-1;renderWeek()}
+
 function renderWeek(){
-  const dates=getWeekDates(weekOffset);
-  const today=new Date();today.setHours(0,0,0,0);
-  const first=dates[0],last=dates[6];
-  document.getElementById('week-label').textContent=`${first.getMonth()+1}/${first.getDate()} 〜 ${last.getMonth()+1}/${last.getDate()}`;
-  const table=document.getElementById('week-table');
-  let html='<thead><tr><th></th>';
-  dates.forEach(d=>{const isToday=d.getTime()===today.getTime();const dow=d.getDay();const cls=`date-col${isToday?' today-col':''}${dow===0?' sun':dow===6?' sat':''}`;html+=`<th class="${cls}">${d.getMonth()+1}/${d.getDate()}<br><span style="font-size:10px">${DAYS[dow]}</span></th>`;});
-  html+='</tr></thead><tbody>';
-  TIMES.forEach(t=>{
-    const [h]=t.split(':').map(Number);const isNight=h>=19;
-    html+=`<tr><td class="time-label">${t}</td>`;
-    dates.forEach(d=>{
-      const ds=fmt(d);const nowH=new Date().getHours();
-      const isPast=d<today||(d.getTime()===today.getTime()&&h<=nowH);
-      const isClosed=closedDays.includes(ds);const isBooked=bookings.some(b=>b.date===ds&&b.time===t);const isSelected=selectedDate===ds&&selectedTime===t;
-      let cls,content;
-      if(isPast||isClosed){cls='slot-btn closed';content='×';}
-      else if(isBooked){cls='slot-btn booked';content='×';}
-      else if(isSelected){cls='slot-btn selected';content='○';}
-      else if(isNight){cls='slot-btn night-available';content='○';}
-      else{cls='slot-btn available';content='○';}
-      const clickable=!isPast&&!isClosed&&!isBooked;
-      html+=`<td><button class="${cls}" ${clickable?`onclick="selectSlot('${ds}','${t}')"`:''} ${!clickable?'disabled':''}>${content}</button></td>`;
-    });
-    html+='</tr>';
+  const dates=getWeek(wo),today=new Date();today.setHours(0,0,0,0);
+  const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1); // 当日予約不可
+  const limit=new Date(today);limit.setDate(today.getDate()+(MAX_WEEKS*7));
+  const f=dates[0],l=dates[6];
+  document.getElementById('wl').textContent=(f.getMonth()+1)+'/'+f.getDate()+' 〜 '+(l.getMonth()+1)+'/'+l.getDate();
+  const navBtns=document.querySelectorAll('#view-booking .week-nav button');
+  if(navBtns.length>=2){
+    navBtns[0].style.opacity=wo<=0?'0.3':'1';navBtns[0].disabled=wo<=0;
+    navBtns[1].style.opacity=wo>=MAX_WEEKS-1?'0.3':'1';navBtns[1].disabled=wo>=MAX_WEEKS-1;
+  }
+  const tb=document.getElementById('wt');
+  let h='<thead><tr><th></th>';
+  dates.forEach(d=>{
+    const it=d.getTime()===today.getTime(),dw=d.getDay();
+    h+=`<th class="dc${it?' today-col':''}${dw===0?' sun':dw===6?' sat':''}">${d.getMonth()+1}/${d.getDate()}<br><span style="font-size:9px">${DW[dw]}</span></th>`;
   });
-  html+='</tbody>';table.innerHTML=html;
+  h+='</tr></thead><tbody>';
+  TM.forEach(t=>{
+    const hr=parseInt(t);const isN=hr>=19;
+    h+=`<tr><td class="tl">${t}</td>`;
+    dates.forEach(d=>{
+      const ds=fmt(d);
+      const isPast=d<tomorrow; // 当日・過去は不可
+      const isTooFar=d>=limit;
+      const isCl=closed.includes(ds),isBlocked=blocks.includes(ds+'_'+t);
+      const isBk=bookings.some(b=>{
+        if(b.date!==ds)return false;
+        const bStart=TM.indexOf(b.time);
+        const dur=parseInt(b.duration||'0');
+        const slots=Math.ceil(dur/30)||1;
+        const tIdx=TM.indexOf(t);
+        return tIdx>=bStart&&tIdx<bStart+slots;
+      });
+      const isSel=sd===ds&&st===t;
+      let cls,ct;
+      if(isPast||isCl||isBlocked||isBk||isTooFar){cls='sb nx';ct='×';}
+      else if(isSel){cls='sb sel';ct='○';}
+      else if(isN){cls='sb nv';ct='○';}
+      else{cls='sb av';ct='○';}
+      const ok=!isPast&&!isCl&&!isBlocked&&!isBk&&!isTooFar;
+      h+=`<td><button class="${cls}"${ok?` onclick="pick('${ds}','${t}')"`:' disabled'}>${ct}</button></td>`;
+    });
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  tb.innerHTML=h;
 }
-function selectSlot(date,time){selectedDate=date;selectedTime=time;renderWeek();const d=new Date(date+'T00:00:00');document.getElementById('selected-info').textContent=`${d.getMonth()+1}月${d.getDate()}日（${DAYS[d.getDay()]}） ${time}〜`;const [h]=time.split(':').map(Number);document.getElementById('night-notice').style.display=h>=19?'block':'none';document.getElementById('form-overlay').classList.add('open');}
-function closeForm(){document.getElementById('form-overlay').classList.remove('open');selectedDate=null;selectedTime=null;renderWeek();}
-function updateDuration(){const sel=document.getElementById('f-menu');const opt=sel.options[sel.selectedIndex];document.getElementById('f-duration').value=opt.dataset.min?`${opt.dataset.min}分`:'';}
-async function submitBooking(){
-  if(submitting)return;
-  const name=document.getElementById('f-name').value.trim();const menu=document.getElementById('f-menu').value;const note=document.getElementById('f-note').value.trim();
-  const sel=document.getElementById('f-menu');const opt=sel.options[sel.selectedIndex];const duration=opt.dataset.min?`${opt.dataset.min}分`:'';
-  if(!name||!menu){alert('お名前とメニューを入力してください');return;}
-  submitting=true;const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='送信中...';
-  try{
-    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:selectedDate,time:selectedTime,name,menu,duration,note})});
-    bookings.push({date:selectedDate,time:selectedTime,name,menu,duration,note});
-    const d=new Date(selectedDate+'T00:00:00');
-    document.getElementById('success-detail').innerHTML=`${d.getMonth()+1}月${d.getDate()}日（${DAYS[d.getDay()]}） ${selectedTime}〜<br>${name} 様<br>${menu}`;
-    document.getElementById('form-overlay').classList.remove('open');document.getElementById('cal-view').style.display='none';document.getElementById('success-view').style.display='block';
-  }catch(e){alert('送信に失敗しました。もう一度お試しください。');}
-  submitting=false;btn.disabled=false;btn.textContent='予約を確定する';
+
+function pick(date,time){
+  sd=date;st=time;renderWeek();
+  const d=new Date(date+'T00:00:00');
+  document.getElementById('sinfo').textContent=`${d.getMonth()+1}月${d.getDate()}日（${DW[d.getDay()]}） ${time}〜`;
+  document.getElementById('nnotice').style.display=parseInt(time)>=19?'block':'none';
+  filterPart=null;filterVisit=null;filterOff=null;selectedMenu=null;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('off-group').style.display='none';
+  renderMenuList();
+  document.getElementById('dur-display').style.display='none';
+  document.getElementById('ov').classList.add('open');
 }
-function resetBooking(){selectedDate=null;selectedTime=null;document.getElementById('f-name').value='';document.getElementById('f-menu').value='';document.getElementById('f-duration').value='';document.getElementById('f-note').value='';document.getElementById('cal-view').style.display='block';document.getElementById('success-view').style.display='none';renderWeek();}
-async function loadBookings(){
-  const el=document.getElementById('admin-list');el.innerHTML='<div class="empty-msg">読み込み中...</div>';
-  try{const res=await fetch(GAS_URL+'?action=list');const data=await res.json();bookings=data.bookings.filter(b=>b.id);renderAdminList();renderWeek();}
-  catch(e){el.innerHTML='<div class="empty-msg">取得できませんでした。再度お試しください。</div>';}
+function closeForm(){document.getElementById('ov').classList.remove('open');sd=null;st=null;renderWeek()}
+
+// ===== 管理カレンダー（ブロック用） =====
+function adminChangeWeek(d){awo+=d;if(awo<0)awo=0;renderAdminWeek()}
+
+function renderAdminWeek(){
+  const dates=getWeek(awo),today=new Date();today.setHours(0,0,0,0);
+  const f=dates[0],l=dates[6];
+  document.getElementById('awl').textContent=(f.getMonth()+1)+'/'+f.getDate()+' 〜 '+(l.getMonth()+1)+'/'+l.getDate();
+  const tb=document.getElementById('awt');
+  let h='<thead><tr><th></th>';
+  dates.forEach(d=>{
+    const it=d.getTime()===today.getTime(),dw=d.getDay();
+    h+=`<th class="dc${it?' today-col':''}${dw===0?' sun':dw===6?' sat':''}">${d.getMonth()+1}/${d.getDate()}<br><span style="font-size:9px">${DW[dw]}</span></th>`;
+  });
+  h+='</tr></thead><tbody>';
+  TM.forEach(t=>{
+    const hr=parseInt(t);
+    h+=`<tr><td class="tl">${t}</td>`;
+    dates.forEach(d=>{
+      const ds=fmt(d);
+      const isPast=d<today;
+      const isCl=closed.includes(ds);
+      const isBlocked=blocks.includes(ds+'_'+t);
+      const isBk=bookings.some(b=>{
+        if(b.date!==ds)return false;
+        const bStart=TM.indexOf(b.time);
+        const dur=parseInt(b.duration||'0');
+        const slots=Math.ceil(dur/30)||1;
+        const tIdx=TM.indexOf(t);
+        return tIdx>=bStart&&tIdx<bStart+slots;
+      });
+      if(isPast||isCl||isBk){
+        h+=`<td><button class="sb nx" disabled>×</button></td>`;
+      } else if(isBlocked){
+        h+=`<td><button class="sb nx is-block blk-mode" onclick="toggleBlock('${ds}','${t}')" style="background:#fff3f3;color:#a32d2d;border:1.5px solid #f09595;cursor:pointer">×</button></td>`;
+      } else {
+        const isN=hr>=19;
+        const cls=isN?'sb nv blk-mode':'sb av blk-mode';
+        h+=`<td><button class="${cls}" onclick="toggleBlock('${ds}','${t}')">○</button></td>`;
+      }
+    });
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  tb.innerHTML=h;
 }
-function renderAdminList(){
-  const search=document.getElementById('search-name').value.toLowerCase();const fd=document.getElementById('filter-date').value;
-  let list=[...bookings];if(search)list=list.filter(b=>b.name&&b.name.toLowerCase().includes(search));if(fd)list=list.filter(b=>b.date===fd);
-  list.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
-  const el=document.getElementById('admin-list');
-  if(!list.length){el.innerHTML='<div class="empty-msg">予約はありません</div>';return;}
-  el.innerHTML=list.map(b=>{
-    const d=new Date((b.date||'')+'T00:00:00');const isNew=b.createdAt&&new Date(b.createdAt)>new Date(Date.now()-24*60*60*1000);const [h]=((b.time||'00:00').split(':').map(Number));const isNight=h>=19;
-    return `<div class="booking-card"><div><div class="name">${b.name||''}様${isNew?'<span class="badge badge-new">新着</span>':''}${isNight?'<span class="badge badge-night">夜間</span>':''}</div><div class="detail">${b.date?`${d.getMonth()+1}/${d.getDate()}（${DAYS[d.getDay()]}）`:''} ${b.time||''}〜（${b.duration||''}）<br>${b.menu||''}${b.note?`<br>メモ：${b.note}`:''}</div></div><button class="btn-del" onclick="deleteBooking('${b.id}')"><i class="ti ti-trash"></i></button></div>`;
+
+function toggleBlock(date,time){
+  const key=date+'_'+time;
+  if(blocks.includes(key)){
+    blocks=blocks.filter(x=>x!==key);
+  } else {
+    blocks.push(key);
+  }
+  localStorage.setItem('mb',JSON.stringify(blocks));
+  renderAdminWeek();
+  renderWeek();
+  renderBlocks();
+}
+
+function renderBlocks(){
+  const el=document.getElementById('btags');
+  if(!blocks.length){el.innerHTML='<span style="font-size:12px;color:#aaa">ブロックなし</span>';return;}
+  const groups={};
+  [...blocks].sort().forEach(k=>{
+    const[date,time]=k.split('_');
+    if(!groups[date])groups[date]=[];
+    groups[date].push(time);
+  });
+  el.innerHTML=Object.entries(groups).sort().map(([date,times])=>{
+    const dt=new Date(date+'T00:00:00');
+    const first=times[0],last=times[times.length-1];
+    const label=times.length>1?`${first}〜${last}（${times.length}枠）`:first;
+    return `<div class="btag">${dt.getMonth()+1}/${dt.getDate()} ${label}<button onclick="clearBlockDay('${date}')">×</button></div>`;
   }).join('');
 }
-async function deleteBooking(id){if(!confirm('この予約を削除しますか？'))return;bookings=bookings.filter(b=>b.id!==id);renderAdminList();renderWeek();}
-function addClosedDay(){const v=document.getElementById('closed-input').value;if(!v)return;if(!closedDays.includes(v))closedDays.push(v);localStorage.setItem('minth_closed',JSON.stringify(closedDays));document.getElementById('closed-input').value='';renderClosedTags();renderWeek();}
-function removeClosedDay(d){closedDays=closedDays.filter(x=>x!==d);localStorage.setItem('minth_closed',JSON.stringify(closedDays));renderClosedTags();renderWeek();}
-function renderClosedTags(){const el=document.getElementById('closed-tags');if(!closedDays.length){el.innerHTML='<span style="font-size:12px;color:#aaa">設定なし</span>';return;}el.innerHTML=[...closedDays].sort().map(d=>{const dt=new Date(d+'T00:00:00');return `<div class="closed-tag">${dt.getMonth()+1}/${dt.getDate()}<button onclick="removeClosedDay('${d}')">×</button></div>`;}).join('');}
-renderWeek();renderClosedTags();
+
+function clearBlockDay(date){
+  blocks=blocks.filter(x=>!x.startsWith(date+'_'));
+  localStorage.setItem('mb',JSON.stringify(blocks));
+  renderAdminWeek();renderWeek();renderBlocks();
+}
+
+// ===== メニュー絞り込み =====
+function setFilter(type,val,btn){
+  btn.closest('.filter-btns').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if(type==='part'){filterPart=val;filterOff=null;
+    document.querySelectorAll('#off-group .fbtn').forEach(b=>b.classList.remove('selected'));
+  }
+  else if(type==='visit'){filterVisit=val;filterOff=null;
+    document.querySelectorAll('#off-group .fbtn').forEach(b=>b.classList.remove('selected'));
+  }
+  else if(type==='off')filterOff=val;
+  // オフ選択を表示するタイミング
+  if(filterPart&&filterVisit){
+    document.getElementById('off-group').style.display='block';
+  }
+  selectedMenu=null;
+  renderMenuList();
+  document.getElementById('dur-display').style.display='none';
+}
+
+function renderMenuList(){
+  const el=document.getElementById('menu-list');
+  if(!filterPart||!filterVisit||!filterOff){
+    el.innerHTML='<div class="menu-placeholder">上の項目をすべて選んでください</div>';
+    return;
+  }
+  const items=MENUS[filterPart][filterVisit][filterOff];
+  const offLabel=filterOff==='yes'?'（オフあり）':'（オフなし）';
+  el.innerHTML=items.map((m,i)=>`
+    <div class="menu-item${selectedMenu&&selectedMenu.idx===i?' selected':''}" onclick="selectMenu(${i})">
+      <div>${m.label}${m.noOff?'':offLabel}</div>
+      <div class="price">${m.price}　${m.min}分</div>
+    </div>
+  `).join('');
+}
+
+function selectMenu(idx){
+  const m=MENUS[filterPart][filterVisit][filterOff][idx];
+  selectedMenu={idx,data:m};
+  renderMenuList();
+  document.getElementById('dur-text').textContent=`所要時間：${m.min}分`;
+  document.getElementById('dur-display').style.display='block';
+}
+
+async function submitBooking(){
+  if(submitting)return;
+  const name=document.getElementById('fn').value.trim();
+  const note=document.getElementById('fnote').value.trim();
+  const tel=document.getElementById('ftel').value.trim();
+  if(!name){alert('お名前を入力してください');return;}
+  if(!filterPart||!filterVisit||!filterOff){alert('施術部位・来店回数・オフを選んでください');return;}
+  if(!selectedMenu){alert('メニューを選んでください');return;}
+  const partLabel=filterPart==='hand'?'ハンド':'フット';
+  const offLabel=selectedMenu.data.noOff?'':filterOff==='yes'?'（オフあり）':'（オフなし）';
+  const menu=`${partLabel}／${selectedMenu.data.label}${offLabel}　${selectedMenu.data.price}`;
+  const dur=selectedMenu.data.min+'分';
+  submitting=true;const btn=document.getElementById('subbtn');btn.disabled=true;btn.textContent='送信中...';
+  try{
+    await fetch(GAS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:sd,time:st,name,tel,menu,duration:dur,note})});
+    bookings.push({date:sd,time:st,name,menu,duration:dur,note,id:'local_'+Date.now()});
+    renderWeek();
+    const d=new Date(sd+'T00:00:00');
+    document.getElementById('sd').innerHTML=`${d.getMonth()+1}月${d.getDate()}日（${DW[d.getDay()]}） ${st}〜<br>${name} 様<br>${menu}`;
+    document.getElementById('ov').classList.remove('open');
+    document.getElementById('cal-view').style.display='none';
+    document.getElementById('sv').style.display='block';
+  }catch(e){alert('送信に失敗しました');}
+  submitting=false;btn.disabled=false;btn.textContent='予約を確定する';
+}
+
+function resetBooking(){
+  sd=null;st=null;filterPart=null;filterVisit=null;filterOff=null;selectedMenu=null;
+  document.getElementById('fn').value='';document.getElementById('ftel').value='';document.getElementById('fnote').value='';
+  document.getElementById('off-group').style.display='none';
+  document.getElementById('cal-view').style.display='block';
+  document.getElementById('sv').style.display='none';
+  renderWeek();
+}
+
+function checkPw(){
+  const v=document.getElementById('pwi').value;
+  if(v===PW){unlocked=true;document.getElementById('pws').style.display='none';document.getElementById('ac').style.display='block';document.getElementById('pwe').style.display='none';renderAdminWeek();}
+  else{document.getElementById('pwe').style.display='block';document.getElementById('pwi').value='';}
+}
+function logout(){unlocked=false;document.getElementById('pws').style.display='flex';document.getElementById('ac').style.display='none';document.getElementById('pwi').value='';}
+function switchTab(t,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-'+t).classList.add('active');
+  if(t==='booking')initBookings();
+}
+
+function loadBookings(){
+  const el=document.getElementById('al');
+  el.innerHTML='<div class="em">読み込み中...</div>';
+  const cb='cb'+Date.now();
+  window[cb]=function(d){
+    try{
+      bookings=(d.bookings||[]).filter(b=>b.id&&b.date&&b.time);
+      renderList();renderWeek();renderAdminWeek();
+    }catch(e){
+      el.innerHTML='<div class="em">取得できませんでした</div>';
+    }
+    delete window[cb];
+    const s=document.getElementById(cb);
+    if(s)s.remove();
+  };
+  const s=document.createElement('script');
+  s.id=cb;
+  s.src=GAS+'?action=list&callback='+cb;
+  s.onerror=function(){el.innerHTML='<div class="em">取得できませんでした</div>';};
+  document.head.appendChild(s);
+}
+
+function renderList(){
+  const sn=document.getElementById('sn').value.toLowerCase(),fd=document.getElementById('fd').value;
+  let list=[...bookings];
+  if(sn)list=list.filter(b=>b.name&&b.name.toLowerCase().includes(sn));
+  if(fd)list=list.filter(b=>b.date===fd);
+  list.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  const el=document.getElementById('al');
+  if(!list.length){el.innerHTML='<div class="em">予約はありません</div>';return;}
+  el.innerHTML=list.map(b=>{
+    const d=new Date((b.date||'')+'T00:00:00'),isN=Number((b.time||'0:00').split(':')[0])>=19;
+    const isNew=b.createdAt&&new Date(b.createdAt)>new Date(Date.now()-86400000);
+    return `<div class="bc-card"><div><div class="nm">${b.name||''}様${isNew?'<span class="bdg bdg-new">新着</span>':''}${isN?'<span class="bdg bdg-n">夜間</span>':''}</div><div class="dt">${b.date?`${d.getMonth()+1}/${d.getDate()}（${DW[d.getDay()]}）`:''} ${b.time||''}〜（${b.duration||''}）<br>${b.menu||''}${b.note?`<br>メモ：${b.note}`:''}</div></div><button class="bd" onclick="delB('${b.id}')">🗑</button></div>`;
+  }).join('');
+}
+function delB(id){if(!confirm('削除しますか？'))return;bookings=bookings.filter(b=>b.id!==id);renderList();renderWeek();}
+
+function addClosed(){const v=document.getElementById('ci').value;if(!v)return;if(!closed.includes(v))closed.push(v);localStorage.setItem('mc',JSON.stringify(closed));document.getElementById('ci').value='';renderClosed();renderWeek();}
+function removeClosed(d){closed=closed.filter(x=>x!==d);localStorage.setItem('mc',JSON.stringify(closed));renderClosed();renderWeek();}
+function renderClosed(){const el=document.getElementById('ctags');if(!closed.length){el.innerHTML='<span style="font-size:12px;color:#aaa">設定なし</span>';return;}el.innerHTML=[...closed].sort().map(d=>{const dt=new Date(d+'T00:00:00');return `<div class="ctag">${dt.getMonth()+1}/${dt.getDate()}<button onclick="removeClosed('${d}')">×</button></div>`;}).join('');}
+
+// 初期読み込み
+function initBookings(){
+  const cb='cb'+Date.now();
+  window[cb]=function(d){
+    try{bookings=(d.bookings||[]).filter(b=>b.id&&b.date&&b.time);}catch(e){}
+    renderWeek();
+    delete window[cb];
+    const s=document.getElementById(cb);
+    if(s)s.remove();
+  };
+  const s=document.createElement('script');
+  s.id=cb;
+  s.src=GAS+'?action=list&callback='+cb;
+  s.onerror=function(){renderWeek();};
+  document.head.appendChild(s);
+}
+initBookings();
+renderClosed();
+renderBlocks();
 </script>
 </body>
 </html>
