@@ -154,7 +154,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
     <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
       <button class="lgbtn" onclick="logout()">ログアウト</button>
     </div>
-
+<!-- 管理カレンダー -->
+<div class="admin-week-nav">
+  <button onclick="adminChangeWeek(-1)">＜</button>
+  <span id="awl"></span>
+  <button onclick="adminChangeWeek(1)">＞</button>
+</div>
+<div style="overflow-x:auto"><table class="week-grid" id="awt"></table></div>
     <!-- 予約一覧 -->
     <div style="margin-bottom:1.5rem">
       <p class="sl">予約一覧</p>
