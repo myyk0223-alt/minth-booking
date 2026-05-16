@@ -482,7 +482,7 @@ console.log('rows:',JSON.stringify(rows));
  
 const res=await fetch(SB_URL+'/rest/v1/blocks',{
   method:'POST',
-  headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+ headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
   body:JSON.stringify(rows)
 });
 if(!res.ok){alert('保存失敗');return;}
