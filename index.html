@@ -478,15 +478,17 @@ async function addBlockRange(){
   while(cur<endMin){times.push(toTime(cur));cur+=30;}
   if(!times.length){alert('終了時間は開始時間より後にしてください');return;}
   const rows=times.map(t=>({date,time:t}));
+console.log('rows:',JSON.stringify(rows));
+
 const res=await fetch(SB_URL+'/rest/v1/blocks',{
   method:'POST',
-  headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+  headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
   body:JSON.stringify(rows)
 });
 if(!res.ok){alert('保存失敗');return;}
 alert(date+' '+start+'〜'+end+' をブロックしました（'+times.length+'枠）');
 await initBookings();
-  }
+}
 async function toggleBlock(date,time){
   const key=date+'_'+time;
   if(blocks.includes(key)){
