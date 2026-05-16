@@ -490,6 +490,7 @@ for(const row of rows){
 if(failed){alert('一部保存失敗');return;}
 alert(date+' '+start+'〜'+end+' をブロックしました（'+times.length+'枠）');
 await initBookings();
+  }
 async function toggleBlock(date,time){
   const key=date+'_'+time;
   if(blocks.includes(key)){
