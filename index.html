@@ -588,7 +588,7 @@ async function loadBookings(){
   const el=document.getElementById('al');
   el.innerHTML='<div class="em">読み込み中...</div>';
   try{
-    const r=await fetch(SB_URL+'/rest/v1/bookings?select=*&order=date,time',{
+    const r=await fetch(SB_URL+'/rest/v1/bookings?select=*&order=date,time&apikey='+SB_KEY,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     const d=await r.json();
