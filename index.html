@@ -442,18 +442,31 @@ function renderAdminWeek(){
   tb.innerHTML=h;
 }
 
-function toggleBlock(date,time){
+async function toggleBlock(date,time){
   const key=date+'_'+time;
   if(blocks.includes(key)){
     blocks=blocks.filter(x=>x!==key);
+    try{
+      await fetch(SB_URL+'/rest/v1/blocks?date=eq.'+date+'&time=eq.'+time,{
+        method:'DELETE',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      });
+    }catch(e){}
   } else {
     blocks.push(key);
+    try{
+      await fetch(SB_URL+'/rest/v1/blocks',{
+        method:'POST',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({date,time})
+      });
+    }catch(e){}
   }
-  localStorage.setItem('mb',JSON.stringify(blocks));
   renderAdminWeek();
   renderWeek();
   renderBlocks();
 }
+
 
 function renderBlocks(){
   const el=document.getElementById('btags');
