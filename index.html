@@ -227,13 +227,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
     </div>
     <div id="dur-display" style="display:none"><span class="dur-badge" id="dur-text"></span></div>
   </div>
-  <div class="field"><label>メモ（任意）</label><textarea id="fnote" placeholder="アレルギーや気になることなど"></textarea></div>
+  <div class="field"><label>メモ（任意）</label><textarea id="fnote" placeholder="長さ出し・亀裂補修がある場合はこちらにご記入ください"></textarea></div>
+  <div style="background:#FFF9E6;border:1px solid #F0D080;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#7A5C00;line-height:1.7">
+    ⚠️ 長さ出し（スカルプ）や自爪に長さがある場合は、通常よりお時間をいただく場合がございます。当日はお時間に余裕をもってのご来店をお願いいたします。
+  </div>
   <button class="bp" id="subbtn" onclick="submitBooking()">予約を確定する</button>
   <button class="bc" onclick="closeForm()">キャンセル</button>
 </div>
 
 <script>
 const GAS='https://script.google.com/macros/s/AKfycby3pLvezMgOKCbZN0PxgKjjtd-2M8ZswKkcl0z1N2C-qWTx_3ak6ZnrxzY0me1EePZlpA/exec';
+const SB_URL='https://lfaorxsyohkxnrdlevzt.supabase.co';
+const SB_KEY='sb_publishable_qLqqGYVbOKTkxnOzJr_UnQ_AkXz-miY';
 const PW='kegp5fi';
 const TM=['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00'];
 const DW=['日','月','火','水','木','金','土'];
@@ -530,9 +535,23 @@ async function submitBooking(){
   const dur=selectedMenu.data.min+'分';
   submitting=true;const btn=document.getElementById('subbtn');btn.disabled=true;btn.textContent='送信中...';
   try{
-    await fetch(GAS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:sd,time:st,name,tel,menu,duration:dur,note})});
-    bookings.push({date:sd,time:st,name,menu,duration:dur,note,id:'local_'+Date.now()});
+    // Supabaseに保存
+    const sbRes=await fetch(SB_URL+'/rest/v1/bookings',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+SB_KEY,
+        'Prefer':'return=representation'
+      },
+      body:JSON.stringify({date:sd,time:st,name,menu,duration:dur,note:note||'',tel:tel||''})
+    });
+    const sbData=await sbRes.json();
+    const newId=sbData[0]?.id||'local_'+Date.now();
+    bookings.push({id:newId,date:sd,time:st,name,menu,duration:dur,note});
     renderWeek();
+    // GASにメール通知
+    fetch(GAS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:sd,time:st,name,tel,menu,duration:dur,note})});
     const d=new Date(sd+'T00:00:00');
     document.getElementById('sd').innerHTML=`${d.getMonth()+1}月${d.getDate()}日（${DW[d.getDay()]}） ${st}〜<br>${name} 様<br>${menu}`;
     document.getElementById('ov').classList.remove('open');
@@ -565,26 +584,19 @@ function switchTab(t,btn){
   if(t==='booking')initBookings();
 }
 
-function loadBookings(){
+async function loadBookings(){
   const el=document.getElementById('al');
   el.innerHTML='<div class="em">読み込み中...</div>';
-  const cb='cb'+Date.now();
-  window[cb]=function(d){
-    try{
-      bookings=(d.bookings||[]).filter(b=>b.id&&b.date&&b.time);
-      renderList();renderWeek();renderAdminWeek();
-    }catch(e){
-      el.innerHTML='<div class="em">取得できませんでした</div>';
-    }
-    delete window[cb];
-    const s=document.getElementById(cb);
-    if(s)s.remove();
-  };
-  const s=document.createElement('script');
-  s.id=cb;
-  s.src=GAS+'?action=list&callback='+cb;
-  s.onerror=function(){el.innerHTML='<div class="em">取得できませんでした</div>';};
-  document.head.appendChild(s);
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/bookings?select=*&order=date,time',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const d=await r.json();
+    bookings=Array.isArray(d)?d.filter(b=>b.id&&b.date&&b.time):[];
+    renderList();renderWeek();renderAdminWeek();
+  }catch(e){
+    el.innerHTML='<div class="em">取得できませんでした</div>';
+  }
 }
 
 function renderList(){
@@ -601,7 +613,17 @@ function renderList(){
     return `<div class="bc-card"><div><div class="nm">${b.name||''}様${isNew?'<span class="bdg bdg-new">新着</span>':''}${isN?'<span class="bdg bdg-n">夜間</span>':''}</div><div class="dt">${b.date?`${d.getMonth()+1}/${d.getDate()}（${DW[d.getDay()]}）`:''} ${b.time||''}〜（${b.duration||''}）<br>${b.menu||''}${b.note?`<br>メモ：${b.note}`:''}</div></div><button class="bd" onclick="delB('${b.id}')">🗑</button></div>`;
   }).join('');
 }
-function delB(id){if(!confirm('削除しますか？'))return;bookings=bookings.filter(b=>b.id!==id);renderList();renderWeek();}
+async function delB(id){
+  if(!confirm('削除しますか？'))return;
+  try{
+    await fetch(SB_URL+'/rest/v1/bookings?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+  }catch(e){}
+  bookings=bookings.filter(b=>b.id!==id);
+  renderList();renderWeek();
+}
 
 function addClosed(){const v=document.getElementById('ci').value;if(!v)return;if(!closed.includes(v))closed.push(v);localStorage.setItem('mc',JSON.stringify(closed));document.getElementById('ci').value='';renderClosed();renderWeek();}
 function removeClosed(d){closed=closed.filter(x=>x!==d);localStorage.setItem('mc',JSON.stringify(closed));renderClosed();renderWeek();}
