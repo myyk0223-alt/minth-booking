@@ -479,7 +479,7 @@ async function addBlockRange(){
   if(!times.length){alert('終了時間は開始時間より後にしてください');return;}
   const rows=times.map(t=>({date,time:t}));
 console.log('rows:',JSON.stringify(rows));
-
+ 
 const res=await fetch(SB_URL+'/rest/v1/blocks',{
   method:'POST',
   headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
