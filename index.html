@@ -318,7 +318,8 @@ const MENUS={
   }
 };
 
-let bookings=[],closed=JSON.parse(localStorage.getItem('mc')||'[]'),blocks=JSON.parse(localStorage.getItem('mb')||'[]');
+let bookings=[],closed=[],blocks=[];
+
 let wo=0,awo=0,sd=null,st=null,submitting=false,unlocked=false;
 let filterPart=null,filterVisit=null,filterOff=null,selectedMenu=null;
 
@@ -625,29 +626,54 @@ async function delB(id){
   renderList();renderWeek();
 }
 
-function addClosed(){const v=document.getElementById('ci').value;if(!v)return;if(!closed.includes(v))closed.push(v);localStorage.setItem('mc',JSON.stringify(closed));document.getElementById('ci').value='';renderClosed();renderWeek();}
-function removeClosed(d){closed=closed.filter(x=>x!==d);localStorage.setItem('mc',JSON.stringify(closed));renderClosed();renderWeek();}
+async function addClosed(){
+  const v=document.getElementById('ci').value;
+  if(!v)return;
+  if(!closed.includes(v)){
+    closed.push(v);
+    try{
+      await fetch(SB_URL+'/rest/v1/closed',{
+        method:'POST',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({date:v})
+      });
+    }catch(e){}
+  }
+  document.getElementById('ci').value='';
+  renderClosed();renderWeek();
+}
+async function removeClosed(d){
+  closed=closed.filter(x=>x!==d);
+  try{
+    await fetch(SB_URL+'/rest/v1/closed?date=eq.'+d,{
+      method:'DELETE',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+  }catch(e){}
+  renderClosed();renderWeek();
+}
+
 function renderClosed(){const el=document.getElementById('ctags');if(!closed.length){el.innerHTML='<span style="font-size:12px;color:#aaa">設定なし</span>';return;}el.innerHTML=[...closed].sort().map(d=>{const dt=new Date(d+'T00:00:00');return `<div class="ctag">${dt.getMonth()+1}/${dt.getDate()}<button onclick="removeClosed('${d}')">×</button></div>`;}).join('');}
 
 // 初期読み込み
 async function initBookings(){
   try{
-    const r=await fetch(SB_URL+'/rest/v1/bookings?select=*',{
-      method:'GET',
-      headers:{
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+SB_KEY,
-        'Content-Type':'application/json'
-      }
-    });
-    if(!r.ok){console.log('Supabase error:',r.status);renderWeek();return;}
-    const d=await r.json();
-    bookings=Array.isArray(d)?d.filter(b=>b.date&&b.time):[];
-  }catch(e){
-    console.log('予約取得エラー:',e);
-  }
+    const [r1,r2,r3]=await Promise.all([
+      fetch(SB_URL+'/rest/v1/bookings?select=*',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}),
+      fetch(SB_URL+'/rest/v1/blocks?select=*',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}),
+      fetch(SB_URL+'/rest/v1/closed?select=*',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}})
+    ]);
+    if(r1.ok){const d=await r1.json();bookings=Array.isArray(d)?d.filter(b=>b.date&&b.time):[];}
+    if(r2.ok){const d=await r2.json();blocks=Array.isArray(d)?d.map(b=>b.date+'_'+b.time):[];}
+    if(r3.ok){const d=await r3.json();closed=Array.isArray(d)?d.map(b=>b.date):[];}
+  }catch(e){console.log('取得エラー:',e);}
   renderWeek();
+  renderAdminWeek();
+  renderBlocks();
+  renderClosed();
 }
+
+
 initBookings();
 renderClosed();
 renderBlocks();
