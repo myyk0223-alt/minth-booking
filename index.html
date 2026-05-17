@@ -32,7 +32,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
 .sb.nv{background:none;color:var(--purple);border:1.5px solid var(--purple)}
 .sb.nv:hover{background:var(--purple-light)}
 .sb.sel{background:var(--pink);color:#fff;border-color:var(--pink)}
-/* 管理モードのブロックボタン */
 .sb.blk-mode.av,.sb.blk-mode.nv{cursor:pointer;border-style:dashed}
 .sb.blk-mode.av:hover{background:#fff3f3;border-color:#f09595;color:#a32d2d}
 .sb.blk-mode.nv:hover{background:#fff3f3;border-color:#f09595;color:#a32d2d}
@@ -97,10 +96,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
 .legend{display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--text2);flex-wrap:wrap}
 .section-div{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 .dur-badge{display:inline-block;background:var(--bg2);border-radius:100px;padding:3px 10px;font-size:12px;color:var(--text2);margin-top:4px}
-/* ブロックモードバナー */
-.block-banner{background:#fff3f3;border:1px solid #f09595;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#a32d2d;display:flex;justify-content:space-between;align-items:center}
-.block-banner button{background:#a32d2d;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer}
-/* 管理カレンダー週ナビ */
 .admin-week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .admin-week-nav button{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-size:13px}
 .admin-week-nav span{font-size:13px;font-weight:500}
@@ -139,89 +134,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
   </div>
 </div>
 
-<!-- 管理画面 -->
-<div id="view-admin" class="view">
-  <div id="pws" class="pw-screen">
-    <div style="font-size:40px;color:#aaa;margin-bottom:1rem">🔒</div>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:1.5rem">管理画面はサロンオーナー専用です</p>
-    <div class="pw-row">
-      <input type="password" id="pwi" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()">
-      <button onclick="checkPw()">入る</button>
-    </div>
-    <p class="pw-err" id="pwe" style="display:none">パスワードが違います</p>
-  </div>
-  <div id="ac" style="display:none">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-      <button class="lgbtn" onclick="logout()">ログアウト</button>
-    </div>
-<!-- 管理カレンダー -->
-<div class="admin-week-nav">
-  <button onclick="adminChangeWeek(-1)">＜</button>
-  <span id="awl"></span>
-  <button onclick="adminChangeWeek(1)">＞</button>
-</div>
-<div style="overflow-x:auto"><table class="week-grid" id="awt"></table></div>
-    <!-- 予約一覧 -->
-    <div style="margin-bottom:1.5rem">
-      <p class="sl">予約一覧</p>
-      <button class="synbtn" onclick="loadBookings()">↻ 最新の予約を取得</button>
-      <div class="fr">
-        <input type="text" id="sn" placeholder="名前で検索" oninput="renderList()">
-        <input type="date" id="fd" onchange="renderList()">
-      </div>
-      <div id="al"><div class="em">「最新の予約を取得」を押してください</div></div>
-    </div>
-
-    <!-- 定休日 -->
-    <div class="section-div">
-      <p class="sl">定休日・休業日</p>
-      <div class="cr">
-        <input type="date" id="ci">
-        <button onclick="addClosed()">追加</button>
-      </div>
-      <div class="ct" id="ctags"></div>
-    </div>
-
-   <!-- 時間ブロック（範囲指定） -->
-<div class="section-div">
-  <p class="sl">時間ブロック</p>
-  <p style="font-size:12px;color:var(--text2);margin-bottom:10px">日付と時間帯を選んでまとめてブロックできます</p>
-  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
-    <div style="display:flex;gap:8px;align-items:center">
-      <label style="font-size:12px;color:var(--text2);min-width:32px">日付</label>
-      <input type="date" id="bi-date" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff">
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <label style="font-size:12px;color:var(--text2);min-width:32px">開始</label>
-      <select id="bi-start" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff">
-        <option value="">時間を選択</option>
-        <option>10:00</option><option>10:30</option><option>11:00</option><option>11:30</option>
-        <option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
-        <option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option>
-        <option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option>
-        <option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option>
-        <option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option>
-      </select>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <label style="font-size:12px;color:var(--text2);min-width:32px">終了</label>
-      <select id="bi-end" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff">
-        <option value="">時間を選択</option>
-        <option>10:00</option><option>10:30</option><option>11:00</option><option>11:30</option>
-        <option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
-        <option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option>
-        <option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option>
-        <option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option>
-        <option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option>
-      </select>
-    </div>
-    <button onclick="addBlockRange()" style="padding:10px;background:var(--pink);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500">この時間帯をブロックする</button>
-  </div>
-  <div class="ct" id="btags"></div>
-</div>
-
-
-<!-- 予約フォーム -->
+<!-- 予約フォーム（overlayはbodyの直下に置く） -->
 <div class="overlay" id="ov">
   <div class="handle"></div>
   <p style="font-size:15px;font-weight:500;margin-bottom:1rem">予約内容の入力</p>
@@ -265,6 +178,92 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;bac
   <button class="bc" onclick="closeForm()">キャンセル</button>
 </div>
 
+<!-- 管理画面 -->
+<div id="view-admin" class="view">
+  <div id="pws" class="pw-screen">
+    <div style="font-size:40px;color:#aaa;margin-bottom:1rem">🔒</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:1.5rem">管理画面はサロンオーナー専用です</p>
+    <div class="pw-row">
+      <input type="password" id="pwi" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()">
+      <button onclick="checkPw()">入る</button>
+    </div>
+    <p class="pw-err" id="pwe" style="display:none">パスワードが違います</p>
+  </div>
+  <div id="ac" style="display:none">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="lgbtn" onclick="logout()">ログアウト</button>
+    </div>
+
+    <!-- 管理カレンダー -->
+    <div class="admin-week-nav">
+      <button onclick="adminChangeWeek(-1)">＜</button>
+      <span id="awl"></span>
+      <button onclick="adminChangeWeek(1)">＞</button>
+    </div>
+    <div style="overflow-x:auto"><table class="week-grid" id="awt"></table></div>
+
+    <!-- 予約一覧 -->
+    <div style="margin-bottom:1.5rem;margin-top:1rem">
+      <p class="sl">予約一覧</p>
+      <button class="synbtn" onclick="loadBookings()">↻ 最新の予約を取得</button>
+      <div class="fr">
+        <input type="text" id="sn" placeholder="名前で検索" oninput="renderList()">
+        <input type="date" id="fd" onchange="renderList()">
+      </div>
+      <div id="al"><div class="em">「最新の予約を取得」を押してください</div></div>
+    </div>
+
+    <!-- 定休日 -->
+    <div class="section-div">
+      <p class="sl">定休日・休業日</p>
+      <div class="cr">
+        <input type="date" id="ci">
+        <button onclick="addClosed()">追加</button>
+      </div>
+      <div class="ct" id="ctags"></div>
+    </div>
+
+    <!-- 時間ブロック（範囲指定） -->
+    <div class="section-div">
+      <p class="sl">時間ブロック</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px">日付と時間帯を選んでまとめてブロックできます</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:12px;color:var(--text2);min-width:32px">日付</label>
+          <input type="date" id="bi-date" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff">
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:12px;color:var(--text2);min-width:32px">開始</label>
+          <select id="bi-start" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff">
+            <option value="">時間を選択</option>
+            <option>10:00</option><option>10:30</option><option>11:00</option><option>11:30</option>
+            <option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
+            <option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option>
+            <option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option>
+            <option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option>
+            <option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:12px;color:var(--text2);min-width:32px">終了</label>
+          <select id="bi-end" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff">
+            <option value="">時間を選択</option>
+            <option>10:00</option><option>10:30</option><option>11:00</option><option>11:30</option>
+            <option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
+            <option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option>
+            <option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option>
+            <option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option>
+            <option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option>
+          </select>
+        </div>
+        <button onclick="addBlockRange()" style="padding:10px;background:var(--pink);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500">この時間帯をブロックする</button>
+      </div>
+      <div class="ct" id="btags"></div>
+    </div>
+
+  </div><!-- /ac -->
+</div><!-- /view-admin -->
+
 <script>
 const GAS='https://script.google.com/macros/s/AKfycby3pLvezMgOKCbZN0PxgKjjtd-2M8ZswKkcl0z1N2C-qWTx_3ak6ZnrxzY0me1EePZlpA/exec';
 const SB_URL='https://lfaorxsyohkxnrdlevzt.supabase.co';
@@ -274,7 +273,6 @@ const TM=['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00
 const DW=['日','月','火','水','木','金','土'];
 const MAX_WEEKS=3;
 
-// メニューデータ（オフあり/なし分離）
 const MENUS={
   hand:{
     new:{
@@ -349,7 +347,6 @@ const MENUS={
 };
 
 let bookings=[],closed=[],blocks=[];
-
 let wo=0,awo=0,sd=null,st=null,submitting=false,unlocked=false;
 let filterPart=null,filterVisit=null,filterOff=null,selectedMenu=null;
 
@@ -360,12 +357,11 @@ function getWeek(o){
   return Array.from({length:7},(_,i)=>{const d=new Date(m);d.setDate(m.getDate()+i);return d;});
 }
 
-// ===== お客様カレンダー =====
 function changeWeek(d){wo+=d;if(wo<0)wo=0;if(wo>MAX_WEEKS-1)wo=MAX_WEEKS-1;renderWeek()}
 
 function renderWeek(){
   const dates=getWeek(wo),today=new Date();today.setHours(0,0,0,0);
-  const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1); // 当日予約不可
+  const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
   const limit=new Date(today);limit.setDate(today.getDate()+(MAX_WEEKS*7));
   const f=dates[0],l=dates[6];
   document.getElementById('wl').textContent=(f.getMonth()+1)+'/'+f.getDate()+' 〜 '+(l.getMonth()+1)+'/'+l.getDate();
@@ -386,7 +382,7 @@ function renderWeek(){
     h+=`<tr><td class="tl">${t}</td>`;
     dates.forEach(d=>{
       const ds=fmt(d);
-      const isPast=d<tomorrow; // 当日・過去は不可
+      const isPast=d<tomorrow;
       const isTooFar=d>=limit;
       const isCl=closed.includes(ds),isBlocked=blocks.includes(ds+'_'+t);
       const isBk=bookings.some(b=>{
@@ -426,7 +422,6 @@ function pick(date,time){
 }
 function closeForm(){document.getElementById('ov').classList.remove('open');sd=null;st=null;renderWeek()}
 
-// ===== 管理カレンダー（ブロック用） =====
 function adminChangeWeek(d){awo+=d;if(awo<0)awo=0;renderAdminWeek()}
 
 function renderAdminWeek(){
@@ -471,6 +466,7 @@ function renderAdminWeek(){
   h+='</tbody>';
   tb.innerHTML=h;
 }
+
 async function addBlockRange(){
   const date=document.getElementById('bi-date').value;
   const start=document.getElementById('bi-start').value;
@@ -484,17 +480,16 @@ async function addBlockRange(){
   while(cur<endMin){times.push(toTime(cur));cur+=30;}
   if(!times.length){alert('終了時間は開始時間より後にしてください');return;}
   const rows=times.map(t=>({date,time:t}));
-console.log('rows:',JSON.stringify(rows));
- 
-const res=await fetch(SB_URL+'/rest/v1/blocks',{
-  method:'POST',
- headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
-  body:JSON.stringify(rows)
-});
-if(!res.ok){alert('保存失敗');return;}
-alert(date+' '+start+'〜'+end+' をブロックしました（'+times.length+'枠）');
-await initBookings();
+  const res=await fetch(SB_URL+'/rest/v1/blocks',{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify(rows)
+  });
+  if(!res.ok){alert('保存失敗');return;}
+  alert(date+' '+start+'〜'+end+' をブロックしました（'+times.length+'枠）');
+  await initBookings();
 }
+
 async function toggleBlock(date,time){
   const key=date+'_'+time;
   if(blocks.includes(key)){
@@ -520,7 +515,6 @@ async function toggleBlock(date,time){
   renderBlocks();
 }
 
-
 function renderBlocks(){
   const el=document.getElementById('btags');
   if(!blocks.length){el.innerHTML='<span style="font-size:12px;color:#aaa">ブロックなし</span>';return;}
@@ -540,11 +534,9 @@ function renderBlocks(){
 
 function clearBlockDay(date){
   blocks=blocks.filter(x=>!x.startsWith(date+'_'));
-  localStorage.setItem('mb',JSON.stringify(blocks));
   renderAdminWeek();renderWeek();renderBlocks();
 }
 
-// ===== メニュー絞り込み =====
 function setFilter(type,val,btn){
   btn.closest('.filter-btns').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
@@ -555,7 +547,6 @@ function setFilter(type,val,btn){
     document.querySelectorAll('#off-group .fbtn').forEach(b=>b.classList.remove('selected'));
   }
   else if(type==='off')filterOff=val;
-  // オフ選択を表示するタイミング
   if(filterPart&&filterVisit){
     document.getElementById('off-group').style.display='block';
   }
@@ -602,7 +593,6 @@ async function submitBooking(){
   const dur=selectedMenu.data.min+'分';
   submitting=true;const btn=document.getElementById('subbtn');btn.disabled=true;btn.textContent='送信中...';
   try{
-    // Supabaseに保存
     const sbRes=await fetch(SB_URL+'/rest/v1/bookings',{
       method:'POST',
       headers:{
@@ -617,7 +607,6 @@ async function submitBooking(){
     const newId=sbData[0]?.id||'local_'+Date.now();
     bookings.push({id:newId,date:sd,time:st,name,menu,duration:dur,note});
     renderWeek();
-    // GASにメール通知
     fetch(GAS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:sd,time:st,name,tel,menu,duration:dur,note})});
     const d=new Date(sd+'T00:00:00');
     document.getElementById('sd').innerHTML=`${d.getMonth()+1}月${d.getDate()}日（${DW[d.getDay()]}） ${st}〜<br>${name} 様<br>${menu}`;
@@ -680,6 +669,7 @@ function renderList(){
     return `<div class="bc-card"><div><div class="nm">${b.name||''}様${isNew?'<span class="bdg bdg-new">新着</span>':''}${isN?'<span class="bdg bdg-n">夜間</span>':''}</div><div class="dt">${b.date?`${d.getMonth()+1}/${d.getDate()}（${DW[d.getDay()]}）`:''} ${b.time||''}〜（${b.duration||''}）<br>${b.menu||''}${b.note?`<br>メモ：${b.note}`:''}</div></div><button class="bd" onclick="delB('${b.id}')">🗑</button></div>`;
   }).join('');
 }
+
 async function delB(id){
   if(!confirm('削除しますか？'))return;
   try{
@@ -708,6 +698,7 @@ async function addClosed(){
   document.getElementById('ci').value='';
   renderClosed();renderWeek();
 }
+
 async function removeClosed(d){
   closed=closed.filter(x=>x!==d);
   try{
@@ -721,7 +712,6 @@ async function removeClosed(d){
 
 function renderClosed(){const el=document.getElementById('ctags');if(!closed.length){el.innerHTML='<span style="font-size:12px;color:#aaa">設定なし</span>';return;}el.innerHTML=[...closed].sort().map(d=>{const dt=new Date(d+'T00:00:00');return `<div class="ctag">${dt.getMonth()+1}/${dt.getDate()}<button onclick="removeClosed('${d}')">×</button></div>`;}).join('');}
 
-// 初期読み込み
 async function initBookings(){
   try{
     const [r1,r2,r3]=await Promise.all([
@@ -739,10 +729,7 @@ async function initBookings(){
   renderClosed();
 }
 
-
 initBookings();
-renderClosed();
-renderBlocks();
 </script>
 </body>
 </html>
